@@ -1,0 +1,87 @@
+Definir Alfa aCodEmp;
+Definir Alfa aRetObs;
+Definir Alfa aSitPed;
+Definir Alfa aSeqIpd;
+
+@Declaração da variável identificando o serviço@
+Definir interno.com.senior.g5.co.int.padrao.documentos.Pedido_8 SrvPedido;
+
+@Cria nova linha para o cabeçalho do pedido@
+SrvPedido.Pedido.CriarLinha();
+SrvPedido.Pedido.OpeExe = "I";
+SrvPedido.Pedido.CodEmp = 1;
+SrvPedido.Pedido.CodFil = 1;
+SrvPedido.Pedido.CodCli = 1;
+SrvPedido.Pedido.VlrOut = "10,50";
+SrvPedido.Pedido.DatPrv = "19/03/2012";
+
+@Cria nova linha para campo de usuário do pedido@
+SrvPedido.Pedido.Usuario.CriarLinha();
+SrvPedido.Pedido.Usuario.CmpUsu = "Usu_CodTeste";
+SrvPedido.Pedido.Usuario.VlrUsu = "1";
+
+@Criar nova linha para cada produto@
+SrvPedido.Pedido.Produto.CriarLinha();
+SrvPedido.Pedido.Produto.OpeExe = "I";
+SrvPedido.Pedido.Produto.CodPro = "1101";
+SrvPedido.Pedido.Produto.CodDer = " ";
+SrvPedido.Pedido.Produto.QtdPed = "1000";
+SrvPedido.Pedido.Produto.CodTpr = " ";
+SrvPedido.Pedido.Produto.PreUni = "10,65";
+
+@Criar nova linha para campo de usuário do produto@
+SrvPedido.Pedido.Produto.Usuario.CriarLinha();
+SrvPedido.Pedido.Produto.Usuario.CmpUsu = "Usu_NCodTeste";
+SrvPedido.Pedido.Produto.Usuario.VlrUsu = "2";
+
+@Define o modo de execução local@
+SrvPedido.ModoExecucao = 1;
+
+@Executa o web service@
+SrvPedido.Executar();
+
+
+
+@Verifica a quantidade de linhas de retorno dos pedidos@
+iQtdLinhasRetornoPedidos = SrvPedido.RespostaPedido.QtdLinhas;
+iQtdPed = 0;
+enquanto (iQtPed < iQtLinhasRetornoPedidos)
+inicio
+   @posiciona no primeiro registro da tabela de retorno@
+   SrvPedido.RespostaPedido.LinhaAtual = iQtdPed;
+   
+   @busca os dados do retorno da inserção do pedido na linha atual@
+   aCodEmp = SrvPedido.RespostaPedido.CodEmp;
+   iCodFil = SrvPedido.RespostaPedido.CodFil;
+   iNumPed = SrvPedido.RespostaPedido.NumPed;
+   aSitPed = SrvPedido.RespostaPedido.SitPed;		 
+   aRetObs = SrvPedido.RespostaPedido.Retorno; 
+
+   @Verifica a quantidade de linhas de retorno do produto do pedido da linha atual@
+   iQtdLinhasRetornoProdutos = SrvPedido.RespostaPedido.GridPro.QtdLinhas;
+
+   iQtdPro = 0;
+   enquanto (iQtdPro < iQtdLinbhasRetornoProdutos)
+   inicio
+      SrvPedido.RespostaPedido.GridPro.LinhaAtual = iQtdPro;
+      aSeqIpd = SrvPedido.RespostaPedido.GriPro.SeqIpd;
+      aRetObs = SrvPedido.RespostaPedido.GridPro.Retorno;
+      iQtdPro = iQtdPro + 1;
+   fim;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
