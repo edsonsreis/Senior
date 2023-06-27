@@ -1,0 +1,48 @@
+@Regra criada no dia 01/11/2021 por Edson Reis@
+@Esta regra cria uma view que gera um relatório da quantidade de cidade por estado@
+
+Definir Alfa aSQL;
+Definir Alfa vNomeView;
+Definir Alfa cCursor;
+Definir Alfa aUF;
+Definir Numero nQtdCid;
+Definir Numero nTotal;
+
+@Comando SQL que representará a view dinâmica.@
+aSQL = "SELECT ESTCID, COUNT(*) QTDCID";
+aSQL = aSQL + " FROM R074CID GROUP BY ESTCID";
+
+@Função que cria uma view e retorna seu nome temporário.@
+CriaView (aSQL, vNomeView);
+
+@Seleciona os dados da view. Obs.: o nome da view está na variável vNomeView.@
+aSQL = "SELECT * FROM " + vNomeView + " ORDER BY 1";
+SQL_Criar(cCursor);
+SQL_DefinirComando(cCursor,aSQL);
+SQL_AbrirCursor(cCursor);
+@Listagem da seção Cabeçalho uma única vez, no exemplo é Adicional_Dado.@
+ListaSecao("Adicional_Cab");
+
+@nTotal será utilizado para fazer uma totalização geral no final dos dados.@ nTotal = 0;
+Enquanto (SQL_EOF(cCursor) = 0)
+  Inicio
+  SQL_RetornarAlfa(cCursor, "ESTCID", aUF);
+  SQL_RetornarInteiro(cCursor, "QTDCID", nQtdCid);
+  @Atribuição de valores aos controles do relatório@
+  AlteraControle("DUF", "Descrição", aUF);
+  FQtdCid = nQtdCid;
+  nTotal = nTotal + nQtdCid;
+  @Para cada registro encontrado no cursor listamos a seção adicional.@
+  ListaSecao("Adicional_Dado");
+  SQL_Proximo(cCursor);
+  Fim;
+SQL_FecharCursor(cCursor);
+SQL_Destruir(cCursor);
+
+@Vamos simular um totalizador das cidades encontradas.@
+AlteraControle("DUF", "Descrição", "Total Geral de Cidades:");
+AlteraControle("DUF", "Fonte", ";NEGRITO;12;;");
+FQtdCid = nTotal;
+AlteraControle("FQtdCid", "Fonte", ";NEGRITO;12;;");
+ListaSecao("Adicional_Dado");
+  
